@@ -68,4 +68,4 @@ function formatDate(dateString) {
   return date.toLocaleDateString("en-US", { timeZone: "UTC" });
 }
 
-renderPastPeriods();
+renderPastPeriods(); 
