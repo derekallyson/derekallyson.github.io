@@ -1,0 +1,12 @@
+.empty {
+    width: 25px;
+    height: 25px;
+}
+
+section {
+    margin-top: 10px;
+}
+
+td {
+    text-align: center;
+}
