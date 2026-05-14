@@ -1,0 +1,35 @@
+*{box-sizing: border-box; margin: 0; padding: 0;}
+body{font-size: 16px; font-family: "Times New Roman", Times, serif; background-color: #f3e9c7; color: #000000;}	
+section{padding-bottom: 1rem; margin-left: 0.5rem; margin-right: 0.5rem;}
+h1{font-size: 2rem; margin-top: 1rem; margin-bottom: 0;}		
+h2{font-size: 1.5rem; margin-top: 1rem; margin-bottom: 0;}
+p{margin-top: 1rem;}            
+ul{margin-top: 1rem; margin-left: 2rem;}
+li{margin-left: 2rem; margin-bottom: 0.5rem;}
+a{color: #000000; font-weight: bold;}
+#illustration_credits p{margin-top: 0; margin-bottom: 0; font-size: 0.9rem;}
+blockquote{padding-top: 0.5rem;}
+blockquote p{margin: 0 0 0 2rem;}
+footer{margin: 2rem 1rem; position: relative; padding-bottom: 2rem;}
+.chapter_prev{position: absolute; top: 0; left: 0.5rem;}
+.chapter_next{position: absolute; top: 0; right: 0.5rem;}
+.chapter_next a, .chapter_prev a, .book_start a{text-decoration: none; color: #750700;} 
+.book_start{text-align:center;font-size:1.5rem;}
+
+/*images*/
+.cover{width: 100%; max-width: 600px; height: auto; display: block; margin: 0.5rem auto 0 auto;}
+.map{width: 100%; max-width: 1000px; height: auto; display: block; margin: 0.5rem auto 0 auto;}
+.grid{width: 100%; max-width: 528px; display:block; margin: 0.5rem auto 0 auto;}            
+.smile{width: 16px; display: inline; margin-bottom: 0;margin-left: 0.35rem; margin-right: 0.35rem;}
+.keyboard{width: 100%; max-width: 382px; display: block; margin: 0.5rem auto 0 auto;}
+.door_symbol{width: 100%; max-width: 162px; display: block; margin: 0.5rem auto 0 auto;}
+.prague_sign{width: 100%; max-width: 321px; display: block; margin: 1rem auto 0 auto;}
+.enochian_characters_forward, .enochian_characters_backward{width: 100%; max-width: 361px; display: block; margin: 1rem auto 0 auto;}
+.no_smoking{width: 100%; max-width: 170px; display: block; margin: 1rem auto 0 auto;}
+.prague_sign_block{width: 100%; max-width: 426px; display: block; margin: 1rem auto 0 auto;}
+.familiar_symbol{width: 100%; max-width: 165px; display: block; margin: 1rem auto 0 auto;}
+.arrow{width: 16px; display: inline; margin: 1rem auto 0 auto;}
+.stairs{width: 100%; max-width: 160px; display: block; margin: 1rem auto 0 auto;}
+.smile2{width: 100%; max-width: 114px; display: block; margin: 1rem auto 0 auto;}
+.starbucks{width: 100%; max-width: 172px; display: block; margin: 1rem auto 0 auto;}
+img.transition{width: 40%; display: block; margin: 2rem auto 2rem auto;}
