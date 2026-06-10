@@ -49,7 +49,7 @@ line-height: 1.6;
 </ul>
 <p>As we worked through our ask, there were three places we looked to make our biggest impact:</p>
 <ol>
-<li>First and foremost we wanted to reduce our intersqaud dependencies...more to come on this</li>
+<li>First and foremost we wanted to reduce our intersquad dependencies...more to come on this</li>
 <li>Second we wanted this to be easy to use, the simpler it is, the faster we can develop emails</li>
 <li>and lastly we spend a lot of time developing emails so we wanted to make sure the the developer experience was a good one and extremely productive.</li>
 </ol>
@@ -92,21 +92,21 @@ And our Minivan friends said that won't work for us we need them to slide. (okay
 <p>So take a look at the &quot;Base Header&quot;, pretty standard.
 When EAT uses it for a Finance Emails we have to show the customer's billing account number.
 Now, Look at the BYOB header, looks a lot like the Base Header as well but they need to show the Quote ID.</p>
-<p>In the old system these two peices of logic would be added to the global header component even though EAT would &quot;never&quot; need to show a customer their QUOTE ID
+<p>In the old system these two pieces of logic would be added to the global header component even though EAT would &quot;never&quot; need to show a customer their QUOTE ID
 and BYOB has no use for showing a customer their billing account number, they wouldn't even have one at that point!</p>
 <p>Now we have decoupled that logic so both teams can just call in the &quot;Base Header&quot; and add their own suite specific logic to the header in just their versions and
 not effect anyone else</p>
 <p>Geeze, take a look at the Salt header, talk about putting a new body style on your base car</p>
 <p>The huge benefit here is now when we make a &quot;squad&quot; specific update to a component we no longer need to coordinate testing efforts across all squads, we never touched the base
-header and that's the one we are all sharing.  Pretty cool huh?</p>
+header and that's the one we are all sharing.  Pretty cool right?</p>
 
 <h2>Making a complex system easy to use</h2>
 <p>Another friction point we have as developers is repeatable petterns.  Take a look at this code.  No need to pay attention to the specifics, just focus on &quot;how much&quot;
 code this actually takes.  The top chunk is how we &quot;trick&quot; gmail into not thinking we just added an email link into your email.  No lie, gmail will actually scan our code looking for the place where we output an email link to the screen and hijack it and make it a baby blue link with a dotted line underneath it which I am pretty positive is not on brand and there is no way to override it.  Crazy right?</p>
-<p>So we have to use this code in any email that wants to show an actual email link in it.  That top chunk of code is essentially us doing all this crazy stuff to the &quot;link&quot; to try and make it not look like a link to gmail but still work and look like a link for the user with our cool Liberty Branding on it.  Geeze.</p>
+<p>So we have to use this code in any email that wants to show an actual email link in it.  That top chunk of code is essentially us doing all this crazy stuff to the &quot;link&quot; to try and make it not look like a link to gmail but still work and look like a link for the user with our cool Liberty Branding on it,  Geeze.</p>
 <p>The phone number is fun too, gmail and apple automatically make all phone numbers clickable links (again with their own branding).  Here's another hack we have to do, you ready for this, secure your nerd glasses.  We have to take the phone number and replace all the dashes in it with a dash and an invisible character next to it which won't be visible in the email but gets around the check that gmail and apple does to our code to look for a valid phone number!  It basically breaks the pattern they are looking for. Be an email developer they said, it'll be fun they said.</p>
 <p>We got real tired of doing that so we abstracted that code and now this is how a dev creates and email link and a phone link in the new architecture.</p>
-<p>Ahhh that feels a lot nicer, but don't be fooled, all that &quot;grossness&quot; is still there it's just hidden in the background now and done inside a component.  The great thing is if Gmail ever figures out this work around then we only need to employ a fix in one place and all our emails would automatically pick it up.</p>
+<p>Ahhhhhh, that feels a lot nicer, but don't be fooled, all that &quot;grossness&quot; is still there it's just hidden in the background now and done inside a component.  The great thing is if Gmail ever figures out this work around then we only need to employ a fix in one place and all our emails would automatically pick it up.</p>
 
 <h2>Increasing productivity by placing a focus on the development workflow</h2>
 <p>I know this may come as a surprise, but on occasion we developers make a mistake when we are coding an email.  SFMC will certainly let us know in a very verbose but not very helpful way.  Take a look at that top box, it's the gentle reminder that you mispelled a variable name.  My favorite part is at the very top it says <strong>&quot;There is an error in your email, please contact your customer service representative!&quot;</strong>.  Haha can you imagine?</p>
@@ -114,7 +114,7 @@ code this actually takes.  The top chunk is how we &quot;trick&quot; gmail into 
 <p>We implemented a system inside all of the components that not only tells you what you did wrong but it also contextually shows you where in the email it happened.</p>
 <p>In the lower image I can very quickly tell that the component I called in for my &quot;salutation&quot; didn't receive the necessary content to output it to the screen.  It tells me which component broke and it shows me exactly where that component is, in the email design.</p>
 <p>While this doesn't completely replace SFMC's error handleing, it definetly makes developing with components much easier and faster to debug when an error occurs.</p>
-<p>I don't know about you Bobby, but I think that's probaly enough nerd talk for one day, what do you think?  Safe to take off the glasses?</p>
+<p>I don't know about you Bobby, but I think that's probably enough nerd talk for one day, what do you think?  Safe to take off the glasses?</p>
 
 </body>
 </html>
