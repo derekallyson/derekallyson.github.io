@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Jenna Demo - One Brand Talk Track&colon;</title>
+<style>
+body {font-family: sans-serif;font-size: 18px;}
+
+h2{
+    background-color:#566D7E;
+    color:#ffffff;
+    padding: 1rem;
+}
+
+ol ol{
+    padding-block-start:10px;
+}
+
+ol li{
+   padding-block-end:20px;
+   color:#ff0000;
+   background-color:#EFEBD8;
+}
+
+ol li ol li{
+   padding-block-start:5px;    
+   padding-block-end:0px; 
+   color:#000000;
+   background-color:#ffffff;
+}
+
+</style>
+</head>
+
+<body>
+<h1>Jenna Demo - One Brand Talk Track:</h1>
+<section id="components">
+    <h2>Let's break down our architecture: Components.</h2>
+    <ol>
+        <li>As a lot of you know we build our email with reusable blocks of code that we call components.</li>
+        <li>Try to think of them like lego blocks
+            <ol>
+                <li>work together</li>
+                <li>can be used in different order</li>
+                <li>stack on each other</li>
+                <li>all combined they create something, which in our case is the email that goes out to our customer</li>
+            </ol>
+        </li>
+        <li>So what's the benefits of doing it this way?
+            <ol>
+                <li>When I started...We all coded emails differently</li>
+                <li>Hard to pick up each others work</li>
+                <li>Took a week to build and test an email</li>
+                <li>That feels like forever now....</li>
+                <li>Today we have these configurable blocks of code like the ...</li>
+                <li>and they all function the same way.</li>
+                <li>just &quot;call it in&quot;</li>
+                <li>don't have to spend any time &quot;learning&quot; the nuances of each other's coding.</li>
+                <li>Make a component, you test, test, test it and make sure it works in all 78+ rendering engines,</li>
+                <li>If gmail makes an edit over the weekend</li>
+            </ol>
+        </li>
+        <li>So to sumerize componenents let us
+            <ol>
+                <li>rapidly develop emails (usually within 1-2 hours now)</li>
+                <li>make all of our coding styles consistent</li>
+                <li>allow us to easily globally make updates if need be.</li>
+            </ol>
+        </li>
+    </ol>
+</section>
+
+<section id="primary">
+    <h2>There were 3 primary areas for opportunities.</h2>
+    <ol>
+        <li>now that we have a good idea of what our architecture looks like</li>
+        <li>let's take a look at how we approached this modernization effort.</li>
+        <li>When you design a sytem of this magnitude there are always a few things you want to make sure you pay attention to:
+            <ol>
+                <li>Maintainability: How easy is it to keep this running</li>
+                <li>Extensibility: How easily are we able to add things to this when and if things change and</li>
+                <li>Scalability: We send a lot of emails and we are not looking to slow down anytime soon so.... can we handle the demand? not just for todays send but for the future as well.</li>
+            </ol>
+        </li>
+        <li>As we worked through our ask, there were three places we looked to make our biggest impact:
+            <ol>
+                <li>reduce our intersqaud dependeceices..</li>
+                <li>the simpler it is the faster we can develop emails</li>
+                <li>we spend a lot of time developing emails (was a good one and extremely productive)</li>
+            </ol>
+        </li>
+        <li>So on the next few slides we'll walk through each of these 3 categories.</li>
+        <li>You'll see many different bodies of work listed on each slide but we don’t have the time to touch on everything,</li>
+        <li>so we picked one or two examples in each category which we'll talk through in more detail.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Customize your components so you only pay for what you need. [Reduce Dependencies]</h2>
+    <ol>
+        <li>So our first category we are going to look at is &quot;Reduce dependancies&quot;.</li>
+        <li>One of the ways we did that was by leaning on a software paradigm called Object Oriented Programming, to understand what that is lets look at how the Alan Kay, the gentleman that coined the term described it.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Customize your components so you only pay for what you need. [Cars Page]</h2>
+    <ol>
+        <li>Ok now that we safely have our nerd glasses on let's understand better what OOP really is:</li>
+        <li>Let's use cars as an example</li>
+        <li>What do cars all have?
+            <ol>
+                <li>Tires</li>
+                <li>Windows</li>
+                <li>Doors</li>
+                <li>Horns</li>
+                <li>Headlights</li>
+            </ol>
+        </li>
+        <li>So any car we buy gives us all those things...but what's different about then?
+            <ol>
+                <li>Body styles</li>
+                <li>Color</li>
+                <li>Interiors</li>
+                <li>Engines</li>
+            </ol>
+        </li>
+        <li>If I really want to build a felxible car
+            <ol>
+                <li>I start by making one that has all the standard stuff</li>
+                <li>That's our &quot;Base Car&quot;</li>
+                <li>every dealership gets that.</li>
+                <li>but it's created it in a way that certain characteristics can be enhanced.</li>
+            </ol>
+        </li>
+        <li>So we all started off with a &quot;base car&quot;
+            <ol>
+                <li>Lamborghini doors open upwards (um okay)</li>
+                <li>ups don't wor for Minivan friends slide. (okay sure)</li>
+            </ol>
+        </li>
+        <li>So like 70% of the car is the same for eveyone but now they can tailor</li>
+        <li>they all &quot;starting&quot; with the Base Car and enhancing to meet customer needs</li>
+        <li>So let's see how that works with our &quot;header component&quot;</li>
+        <li>So take a look at the &quot;Base Header&quot; pretty standard.
+            <ol>
+                <li>EAT uses Billing Accout Number</li>
+                <li>BYOB uses QUOTE ID</li>
+            </ol>
+        </li>
+        <li>In the old system these
+            <ol>
+                <li>all coupled together and added unneded logic for both squads</li>
+                <li>EAT never shows QUOTE ID</li>
+                <li>BYOB never shows BAN that don't even have it</li>
+            </ol>
+        </li>
+        <li>Now we have decoupled that logic
+            <ol>
+                <li>both call in the base header</li>
+                <li>both can add logic for thier specific suit in thier own version</li>
+                <li>90% of the header is shared, 10% id overriden/enhanced</li>
+                <li>Geeze look at the Salt header, talk about putting a new body style on your base car</li>
+            </ol>
+        </li>
+        <li>The huge benefit here is now when we make a &quot;squad&quot; specific update
+            <ol>
+                <li>no longer need to coordinate testing efforts across all squads,</li>
+                <li>we never touched the base</li>
+                <li>that's the one we are all sharing.</li>
+                <li>Pretty cool huh?</li>
+            </ol>
+        </li>
+    </ol>
+</section>
+
+<section>
+    <h2>Making a complex system easy to use</h2>
+    <ol>
+        <li>Another friction point we have as developers is repeatable petterns.
+            <ol>
+                <li>Take a look at this code.</li>
+                <li>No need to pay attention to the specifics, just focus on &quot;how much&quot; code this actually takes.</li>
+                <li>The top chunk is how we &quot;trick&quot; gmail into not thinking we just added an email link into your email.</li>
+                <li>gmail adds it's own branding</li>
+                <li>we need to do weird stuff to the link</li>
+                <li>so we control the branding</li>
+            </ol>
+        </li>
+        <li>The phone number is fun too
+            <ol>
+                <li>gmail and apple automatically make all phone numbers clickable links</li>
+                <li>Wait until you hear this hack...nerd glasses</li>
+                <li>We have to take the phone number and replace all the dashes</li>
+                <li>Be an email developer they said, it'll be fun they said.</li>
+            </ol>
+        </li>
+        <li>We got real tired of doing that
+            <ol>
+                <li>we abstracted that code and now this is how a</li>
+                <li>dev creates and email link and a phone link in the new architecture.</li>
+            </ol>
+        </li>
+        <li>Ahhh that feels a lot nicer,
+            <ol>
+                <li>but don't be fooled, all that &quot;grossness&quot; is still there</li>
+                <li>devs don't add that chunk any more</li>
+                <li>if gmail gets wise...</li>
+            </ol>
+        </li>
+    </ol>
+</section>
+
+<h2>Increasing productivity by placing a focus on the development workflow</h2>
+<ol>
+    <li>I know this may come as a surprise,
+        <ol>
+            <li>SFMC will certainly let us know in a very verbose but not very helpful way.</li>
+            <li>Take a look at that top box, it's the gentle reminder that you mispelled a variable name.</li>
+            <li>My favorite part is at the very top it says <strong>&quot;There is an error in your email, please contact your customer service representative!&quot;</strong>.</li>
+            <li>Haha can you imagine?</li>
+        </ol>
+    </li>
+    <li>Anyway here's where things get difficult, they tell you something is broken but...
+        <ol>
+            <li>not rendered</li>
+            <li>don't always know where</li>
+        </ol>
+    </li>
+    <li>We implemented a system inside all of the components...
+        <ol>
+            <li>tells you what you did wrong</li>
+            <li>contextually shows you where</li>
+        </ol>
+    </li>
+    <li>In the lower image
+        <ol>
+            <li>salutation location</li>
+            <li>missing text</li>
+        </ol>
+    </li>
+    <li>While this doesn't completely replace SFMC's error handleing...def makes easier</li>
+    <li>I don't know about you Bobby, but I think that's probaly enough nerd talk for one day, whaddya think.</li>
+    <li>Safe to take off the glasses?</li>
+</ol>
+</body>
+</html>

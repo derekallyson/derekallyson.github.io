@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Jenna Demo - One Brand Talk Track:</title>
+<style>
+body {
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+font-size: 14px;
+line-height: 1.6;
+}
+</style>
+</head>
+        
+<body>
+<h1>Jenna Demo - One Brand Talk Track:</h1>
+<h2>Let's break down our architecture: Components.</h2>
+<ol>
+<li>As a lot of you know we build our email with reusable blocks of code that we call components.</li>
+<li>Try to think of them like lego blocks
+<ol>
+<li>they work together</li>
+<li>they can be used in different order</li>
+<li>they stack on each other</li>
+<li>and when all combined they create something, which in our case is the email that goes out to our customer</li>
+</ol>
+</li>
+</ol>
+<p>So what's the benefits of doing it this way?</p>
+<ul>
+<li>Well back in Pre-Dark Mode ages when I joined the email team we all use to code our emails completely differently, we had the same looking designs in the end but we all got there a different way.</li>
+<li>As you can imagine if I had to pick up one of Bobby's emails because he was on vacation...it was done completely different than I would have done it, not wrong just different</li>
+<li>It used to take us roughly a week to code an email and test it and make sure it worked in all the different clients like (gmail, outlook, comcast, apple mail)</li>
+<li>That feels like forever now....</li>
+<li>Today we have these configurable blocks of code like &quot;the header&quot;, &quot;the button&quot;, &quot;the footer...&quot; and they all function the same way.  So if I need one I just &quot;call it in&quot; and poof I have a full Liberty Mutual header in my email and it's coded and works the exact same way Bobby's does.  That means we can now pass emals back and forth and not have to spend any time &quot;learning&quot; the nuances of each other's coding.</li>
+<li>When you make a component, you test, test, test it and make sure it works in all 78+ rendering engines, and once it does...you know it won't change so next time you use it your testing per email becomes very minimal</li>
+<li>Here's another great feature of coponents, let's say we need to make an update to the &quot;button&quot; component because over the weekend gmail decided to introduce an new feature and now our buttons look a little funny in 200+ emails.  Back in the old days we had to make that update in 200 different templates...today we make that update in one spot and all the templates that use that component just auto-magically pick it up.</li>
+</ul>
+<p>So componenents let us rapidly develop emails (usually within 1-2hours), make all of our coding style consistent and allow us to easily globally make updates if need be.</p>
+
+
+<h2>There were 3 primary areas for opportunities.</h2>
+<p>So now that we have a good idea of what our architecture looks like, let's take a look at how we approached this modernization effort.</p>
+<p>When you design a sytem of this magnitude there are always a few things you want to make sure you pay attention to:</p>
+<ul>
+<li>Maintainability: How easy is it to keep this running</li>
+<li>Extensibility: How easily are we able to add thing to this when and if things change and</li>
+<li>Scalability: We send a lot of emails and we are not looking to slow down anytime soon so.... can we handle the demand? not just for todays send but for the future as well.</li>
+</ul>
+<p>As we worked through our ask, there were three places we looked to make our bigget impact:</p>
+<ol>
+<li>First and Formoset we wanted to reduce our intersqaud dependeceices...more to come on this</li>
+<li>Second we wanted this to be easy to use, the simpler it is the faster we can develope emails</li>
+<li>and lastly we spend a lot of time developeing emails so we wanted to make sure the the developer experience was a good one and extremely productive.</li>
+</ol>
+<p>So on the next few slides we'll walk through each of these 3 categories. You'll see many different bodies of work listed on each slide but we don’t have the time to touch on everything, so we picked one or two examples in each category which we'll talk through in more detail.</p>
+
+
+<h2>Customize your components so you only pay for what you need. [Reduce Dependencies]</h2>
+<p>So our first category we are going to look at is &quot;Reduce dependancies&quot;.</p>
+<p>One of the ways we did that was by leaning on a software paradigm called Object Oriented Programming, to understand what that is lets look at how the Alan Kay, the gentleman that coined the term described it.</p>
+<p>[Read Quote] - A system based entirely on messaging, extreme isolation (encapsulation) of state, and dynamic late-binding.</p>
+<p>We need a little more explanation than that I think</p>
+<p>[read the text block] - Object-Oriented Programming (OOP) is a computer programming paradigm that organizes software design around data, or "objects," rather than functions </p>
+
+<h2>Customize your components so you only pay for what you need. [Cars Page]</h2>
+<p>Okay now that we safely have our nerd glasses on let's understand what Object Oriented Programming really is:</p>
+<p>Let's use cars as an example</p>
+<p>What do cars all have?</p>
+<ul>
+<li>Tires</li>
+<li>Windows</li>
+<li>Doors</li>
+<li>Horns</li>
+<li>Headlights</li>
+</ul>
+<p>So any car we buy gives us all those things...but what's different about then?</p>
+<ul>
+<li>Body styles</li>
+<li>Color</li>
+<li>Interiors</li>
+<li>Engines</li>
+</ul>
+<p>If I really want to build a felxible car I start by making one that has all the standard stuff that all cars have, Tires, Windows, and so on...we'll call that our &quot;Base Car&quot;
+That's what every dealership gets.  But I created it in a way that certain characteristics can be enhanced.</p>
+<p>So we all started off with a &quot;base car&quot;
+But our friends at Lamborghini decide they wanted to have it's doors open upwards (um okay)
+And our Minivan friends said that won't work for us we need them to slide. (okay sure)</p>
+<p>So like 70% of the car is the same for eveyone but they get to &quot;tailor&quot; parts of it to do what &quot;THEY&quot; want it to do.</p>
+<p>So they are all &quot;starting&quot; with the Base Car and then enhancing it in their own way to meet their customer's needs.</p>
+<p>So let's see how that works with our &quot;header component&quot;</p>
+<p>So take a look at the &quot;Base Header&quot; pretty standard.
+When EAT uses it for a Finance Emails we have to show the customer's billing account number
+Look at the BYOB header, looks a lot like the Base Header as well but they need to show the Quote ID.</p>
+<p>In the old system these two peices of logic would be added to the global header component even though EAT would &quot;never&quot; need to show a customer thier QUOTE ID
+and BYOB has no use for showing a customer thier billing account number, they wouldn't even have one at that point!</p>
+<p>Now we have decoupled that logic so both teams can just call in the &quot;Base Header&quot; and add thier own suite specific logic to the header in just thier versions and
+not effect anyone else</p>
+<p>Geeze look at the Salt header, talk about putting a new body style on your base car</p>
+<p>The huge benefit here is now when we make a &quot;squad&quot; specific update to a component we no longer need to coordinate testing efforts across all squads, we never touched the base
+header and that's the one we are all sharing.  Pretty cool huh?</p>
+
+<h2>Making a complex system easy to use</h2>
+<p>Another friction point we have as developers is repeatable petterns.  Take a look at this code.  No need to pay attention to the specifics, just focus on &quot;how much&quot;
+code this actually takes.  The top chunk is how we &quot;trick&quot; gmail into not thinking we just added an email link into your email.  No lie, gmail will actually scan our code looking for the place where we output an email link to the screen and hijack it and make it a baby blue link with a dotted line underneath it which I am pretty positive is not on brand and there is no way to override it.  Crazy right?</p>
+<p>So we have to use this code in any email that wants to show an actual email link in it.  That top chunk of code is essentially us doing all this crazy stuff to the &quot;link&quot; to try and make it not look like a link to gmail but still work and look like a link for the user with our cool Liberty Branding on it.  Geeze.</p>
+<p>The phone number is fun too, gmail and apple automatically make all phone numbers clickable links (again with their own branding).  Here's another hack we have to do, you ready for this, secure your nerd glasses.  We have to take the phone number and replace all the dashes in it with a dash and an invisible character next to it which won't be visible in the email but gets around the check that gmail/apple does to our code to look for a valid phone number!  It basically break the pattern they are looking for. Be an email developer they said, it'll be fun they said.</p>
+<p>We got real tired of doing that so we abstracted that code and now this is how a dev creates and email link and a phone link in the new architecture.</p>
+<p>Ahhh that feels a lot nicer, but don't be fooled, all that &quot;grossness&quot; is still there it's just hidden in the background now and done inside a component.  The great thing is if Gmail ever figures out this work around then we only need to employ a fix in one place and all out emails would automatically pick it up.</p>
+
+<h2>Increasing productivity by placing a focus on the development workflow</h2>
+<p>I know this may come as a surprise, but on occasion we developers make a mistake when we are coding an email.  SFMC will certainly let us know in a very verbose but not very helpful way.  Take a look at that top box, it's the gentle reminder that you mispelled a variable name.  My favorite part is at the very top it says <strong>&quot;There is an error in your email, please contact your customer service representative!&quot;</strong>.  Haha can you imagine?</p>
+<p>Anyway here's where things get difficult, they tell you something is broken but they don't show the actual rendering of the email so quite often you have to try and guess roughly where your mistake is and thats very time comsuming.</p>
+<p>We implemented a system inside all of the components that not only tells you what you did wrong but it also contextually shows you where in the email it happened.</p>
+<p>In the lower image I can very quickly tell that the component I called in for my &quot;salutation&quot; didn't receive the necessary content to output it to the screen.  It tells me which component broke and it shows me exactly where that component is in the email design.</p>
+<p>While this doesn't completely replace SFMC's error handleing, it definetly makes developing with components much easier and faster to debug when an error occurs.</p>
+<p>I don't know about you Bobby, but I think that's probaly enough nerd talk for one day, whaddya think.  Safe to take off the glasses?</p>
+
+</body>
+</html>
