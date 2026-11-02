@@ -260,7 +260,7 @@ play.addEventListener("click", async () => {
 //this will let us modify where we start the playback of our song
     //Tone.Transport.position defaults to "0:0:0" but we'll leave this
     //here for debugging purpose so we can point to different sections of the song
-    Tone.Transport.position = "46:0:0";
+    Tone.Transport.position = "0:0:0";
 
     //Tone.Transport.bpm.value = 110;
 
