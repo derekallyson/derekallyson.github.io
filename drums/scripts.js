@@ -1,110 +1,339 @@
-
-/******************/
-/* EVENT HANDLING */
-/******************/
+// create connection points to the elements in the dom so we can trigger the sounds
+// tone.js can not play sounds unless there is a user interaction causing it to do so
+//so we add a play button that starts everything off when the user presses it.
 let play = document.querySelector("#play");
 let playing = document.querySelector("#playing");
 
-play.addEventListener("click", async () => {
-    //hide the button
-    play.style = "display: none";
-    //show the message
-    playing.style = "display: block";
 
-    //Instantiate Tone.js
-    await Tone.start();
+/* Each function below is an example from chapter 12 - Generating Sounds */
 
-    /***************/
-    /* INSTRUMENTS */
-    /***************/
-    function mkDrums(){
+function makeSingleSound(){
+    // Start the Tone JS Library so we can use it's classes
+    Tone.start();
 
-        //create the reverb (room size effect) we want to use.
-        let reverb = new Tone.Reverb({
-            decay: 1,
-            wet: 0.3
-        }).toDestination();
-
-        //create the filter for use with the hihats it only lets notes in the 
-        //frequency of 15000 Hz pass through.  Also add the reverb to the end of this 
-        let hiHatFilter = new Tone.Filter(15000, "bandpass").connect(reverb);
-
-        //create the hiHats
-        let hiHat = new Tone.NoiseSynth({
-            envelope: {
-                attack: 0.001, decay: 0.1, sustain: 0, release:0
-            },
-            volume: -6
-        }).connect(hiHatFilter);
-
-        //let's build a class off the snare and put it inside this function.
-        class Snare {
-            constructor() {
-                //first we need to filter out the noise we and only let the frequency of 5000 come through in a the bandpass.
-                this.noiseFilter = new Tone.Filter(5000, "bandpass").connect(reverb);
-                //set up the snare string part of the drum
-                this.noiseSynth = new Tone.NoiseSynth({
-                    envelope: {
-                        attack: 0.001, decay: 0.1, sustain:0, release:0 
-                    }, 
-                    volume: -12
-                }).connect(this.noiseFilter);
-
-                //set up the head of the snare drum
-                this.synth = new Tone.Synth({
-                    envelope: {
-                        attack: 0.0001, decay: 0.1, sustain: 0, release: 0
-                    },
-                    oscillator: {type: "sine"},
-                    volume: -12
-                }).connect(reverb);
+    /*
+    create a new Synthesizer and tell it the type of waveform we want to use
+    then allow it to play an array of notes in the 4 different waveforms
+    Waveforms:
+    Sine: Only the fundamental frequency passed to it (Ex: 200Hz)
+    Square: The fundamental frequency plus every other harmonic frequncy F: 200Hz, H:600Hz, 1000Hz, 1400Hz.....
+    Triangle: The fundamental frequency plus every other harmonic frequncy F: 200Hz, H:600Hz, 1000Hz, 1400Hz.....However the amplitude decreases more rapidly as the harmonics increase  
+    Sawtooth: The fundamental frequency plus all harmonic frequncies F: 200Hz, H: 400Hz, 600Hz, 800Hz, 1000Hz, 1200Hz.....
+    Note: no matter how many harmonics a note has we still perceive the fundamental as the note's pitch, the others simply "color" the sound.
+    */
+    let waveforms = ["sine","triangle","square","sawtooth"];
+    let notes = ["A3", "B3", "C#4", "D4", "E4", "F#4", "G#4", "A4"];
+    //imperial march
+    //let notes = ["A4", "A4", "A4", "F4", "C5", "A4", "F4", "C5", "A4"];
+    let multiplier = 0;
+    
+    /*
+    play the notes with each of the different waveforns
+    this loop rips straight through and the notes will all get added to a 
+    queue where they are then played at the time specified 
+    in the triggerAttackRelease function.  Basically we are setting this 
+    to play the notes one second apart.  I wanted to ouput to the screen
+    which waveform you are currentyl hearing but I have not figured out 
+    how to do that yet since these all get called asynchronously. 
+    */
+    for(x = 0; x < waveforms.length; x++){     
+        //play each note in the current waveform
+        for(y = 0; y < notes.length; y++){           
+            //this allows us to correctly make the time 1 second from the last note 
+            //based on the number of notes that we have added to the array
+            if(x != 0){
+                multiplier = (x * notes.length);
             }
-            
-            //this method will get called to play the drumes once created
-            triggerAttackRelease(duration, when){
-                this.noiseSynth.triggerAttackRelease(duration, when);
-                this.synth.triggerAttackRelease("G3", duration, when);
-            }
+
+            let synth = new Tone.Synth({
+                oscillator: {type: waveforms[x]},
+                envelope: {attack: 0.1, decay: 0.3, sustain: 0.8, release: 0.1},
+                volume: -12
+            }).toDestination();
+
+            synth.triggerAttackRelease(notes[y], 0.9, multiplier+y);
         }
-
-        //finally create the snare drum object
-        let snare = new Snare();
-
-        //create the kick drum object
-        let kick = new Tone.MembraneSynth({
-            pitchDecay: 0.08,
-            octaves: 4,
-            volume: -18
-        }).connect(reverb);
-
-        return {hiHat, snare, kick};
     }
+}
 
-    //instantiate the drums and get back an object that contains a hihat, snare and kick drum
-    let drums = mkDrums();
+//Using the Poly Synthesizer so we can play multiple notes at once.  
+//My understanding is that it really just creates a bunch of single synths 
+//And runs them all at the same time. 
+function playMultipleNotes(){
+    Tone.start();
+
+    let synth = new Tone.PolySynth(
+        Tone.Synth,
+        {
+            oscillator: "square",
+            envelope: {attack: 01, decay: 0.3, sustain: 0.8, release: 0.1},
+            volume: -12
+        }
+    ).toDestination();
+
+    //We're able to pass an array of notes to this function as well as just a single note.
+    synth.triggerAttackRelease(["A3", "C#4"], 0.9, 0);
+    synth.triggerAttackRelease(["B3", "D4"], 0.9, 1);
+    synth.triggerAttackRelease(["C#4", "E4"], 0.9, 2);
+    synth.triggerAttackRelease(["D4", "F#4"], 0.9, 3);
+    synth.triggerAttackRelease(["E4", "G#4"], 0.9, 4);
+    synth.triggerAttackRelease(["F#4", "A4"], 0.9, 5);
+    synth.triggerAttackRelease(["G#4", "B4"], 0.9, 6);
+    synth.triggerAttackRelease(["E4", "A4", "C#5"], 1.9, 7);
+}
+
+//This will show a simple loop using a transport.  The timing for a transport looks like this "0:0:0" (bars:quarters:sixteeths) notation. (Everything is zero indexed)
+//Broken down to me "current bar number : current beat within that bar : current 16th note within that beat"
+//Remember Quarter notes (4 beats in a bar), Eighth notes (8 beats in a bar), 16th notes (16 beats in a bar) 
+//Example: "6:3:2" is the third sixteenth note of the fourth beat of the seventh bar. (Zero based indexing) 
+//Tone JS defaults to 120 BPM (Beats per minute) so a beat every 0.5 seconds.
+function transportLoop(){
+
+    Tone.start();
+    
+    //we are not passing in an oscillator, evnelope or volume so we will get the defaults
+    let synth = new Tone.Synth().toDestination();
+
+    //the loop function take two args, a function that will do something with the time passed to it, and how often that function should be called
+    //4n is the same as 1/4 note or a quarter note.(8n = Eighth Notes, 16n = Sixteenth Notes....)
+    let loop = new Tone.Loop(time => {
+        synth.triggerAttackRelease("C4", "8n", time);
+        //notice time is (0.5 seconds (since BPM is defaulted to 120), but not dead on. 
+        console.log(`Time: ${time} Seconds, \nLoop Position: ${Tone.Transport.position}`);
+    }, "4n");
+
+    //looks like we call the loop for 4 bars starting immediately
+    //this allows us to be 16th note granular on where we start and where we finish
+    //(bars:quarters:sixteeths)
+    loop.start("0:0:0");
+    loop.stop("4:0:0");
+
+    // ^^^^^^^^^^^
+    //if you want "tighter" code you can chain the start and stop methods to the end of the Loop method then you won't need to create a variable
+    //Ex. Tone.Loop(callback function(),"how often to call back").start("0:0:0").stop("4:0:0");
+    //I'll leave it exploded for the sake of learning, going forward I'll use the shorthand.
+
+    //this is how we can set the Beats Per Minute if we want to (default is 120 bpm)
+    //Tone.Transport.bpm.value = 60;
+
+    Tone.Transport.start();
+}
 
 
-    //instantiate the bass
-    let lowBass = new Tone.FMSynth({
-        oscillator: {type: "triangle"},
-        envelope: {attack: 0.0001, decay: 0.5, sustain: 0.3, release: 0.1},
-        volume: -3
+function transportPentatonic(){
+    Tone.start()
+    /*
+    we are going to try and play multiple notes at once so we'll use a PolySynth
+    remember the first argument to the PolySynth method is a "single synth" 
+    we'll use the "default" envelope but pass in an oscillator type and the desired volume 
+    */
+    let synth = new Tone.Synth(
+        {
+            oscillator: {type: "triangle"},
+            volume: -9
+        }
+    ).toDestination();
+
+    //the petatonic scale + one octive 
+    let notes = ["C4", "D4", "E4", "G4", "A4", "C5"];
+    let counter = 0;
+    /*
+    give us 8 bars of 8th notes randomly picking a note from our "notes" array
+    notice the count output, because we are using eighth notes that's "faster" than the quarter notes picked up by the 
+    middle Loop position so you see things like:
+    Loop Position: 0:0:0
+    Loop Position: 0:0:2
+    Loop Position: 0:1:0
+    Loop Position: 0:1:2
+    Ending at...
+    Loop Position: 7:3:2 (because the next iteration would be 8:0:0 which it won't include)
+    It's usgin the sixteenth notes section to keep track (remember there is 2 16th notes in an 8th note).
+    That's how the loop is getting called.
+    */
+    new Tone.Loop(time => {   
+        //50/50 shot of if we play that note or not (this adds random rests into the solo)
+        if(Math.random() < 0.5){
+            // randomly pick a note from the array
+            let note = notes[Math.floor(Math.random() * notes.length)];
+            console.log(`Note:${note} Played`);
+            //play that note for 1/32 at the specified time
+            synth.triggerAttackRelease(note, "32n", time);
+        }
+        else{
+            //output that we rested and didn't play a note
+            console.log(`Rest`);
+        }
+        //this is just our info blcok to make sure things look and work like we "understand" them too.
+        console.log(`Time: ${time} Seconds, \nLoop Position: ${Tone.Transport.position} Count: ${++counter}`);
+    }, "8n").start("0:0:0").stop("8:0:0");
+
+    //Kick of the Transport
+    Tone.Transport.start();
+}
+
+
+function transportSequence(){
+
+    Tone.start();
+
+    //use the defaults
+    let synth = new Tone.Synth().toDestination();
+
+    /* 
+    We are going to play all the notes in the array that we pass to this function for 4 bars as 8th notes and 
+    we'll repeat going through the array when we hit the end, also the "nulls" are essentially "rests" meaning
+    no note get's played there.  This is helpful for long runs of non-varying timimg. 
+    */
+    new Tone.Sequence((time,note) => {
+        synth.triggerAttackRelease(note, "16n", time);
+    }, ["C4", null, "B3", "C4", "G3", "A3", null, "B3"], "8n")
+       .start("0:0:0")
+       .stop("4:0:0");
+    
+
+    /* Imperial March */
+    /*
+    new Tone.Sequence((time,note) => {
+        synth.triggerAttackRelease(note, "8n", time);
+    }, ["A4", null, "A4", null, "A4", null, "F4", "C5", "A4", null, "F4", "C5", "A4", null], "4n").start("0:0:0").stop("3:1:0");
+    */
+
+    Tone.Transport.start();
+}
+
+function transportPart(){
+    Tone.start();
+    
+    //use the defaults (maybe vader it up after????)
+    let synth = new Tone.Synth({
+        oscillator: {type:"sine"},
+        volume: 3
     }).toDestination();
 
-    let highBass = new Tone.FMSynth({
-        oscillator: {type: "square"},
-        envelope: {attack: 0.0001, decay: 0.1, sustain: 0.3, release: 0.1},
-        volume: -9
+    /*
+    here we are passing an array of notes that will get called at a specific time which we are also passing in
+    if we want to use a polySynth we could pass this structure instead
+    ["0:0:0", ["A2","C2","D3"]]
+    */
+    new Tone.Part((time, note) => {
+        synth.triggerAttackRelease(note,"16n",time);
+    }, [
+        ["0:0:0", "A2"],
+        ["0:1:2", "A2"],
+        ["0:3:0", "A2"],
+        ["1:0:2", "F2"],
+        ["1:1:2", "C3"],
+        ["1:2:0", "A2"],
+        ["1:3:2", "F2"],
+        ["2:0:2", "C3"],
+        ["2:1:0", "A2"]
+    ]).start("0:0:0");
+
+    //this is how we can set the Beats Per Minute if we want to (default is 120 bpm)
+    Tone.Transport.bpm.value = 110;
+    Tone.Transport.start();
+}
+
+function playDrums(drumPattern){
+
+    Tone.Transport.bpm.value = drumPattern.bpm
+
+    Tone.start();
+
+    //little reverb to make it soud real
+    let reverb = new Tone.Reverb({
+        decay: 1,
+        wet: 0.3
     }).toDestination();
 
-    //instantiate the chords
-    let chordSynth = new Tone.PolySynth(Tone.Synth, {
-        oscillator: {type: "triangle"},
+    /**********************/
+    /* CREATE THE HI HATS */
+    /**********************/
+    //only allow the higher frequencies (15K)
+    let hiHatFilter = new Tone.Filter(15000,"bandpass").connect(reverb);
+    
+    //create the hi hat (chk) sound
+    let hiHat = new Tone.NoiseSynth({
+        envelope: {
+            attack: 0.001, decay: 0.1, sustain: 0, release: 0        
+        },
+        volume: -6
+    }).connect(hiHatFilter);
+
+    // keep looping the hi hat
+    new Tone.Sequence(time => {
+        hiHat.triggerAttackRelease("16n", time);
+    }, makeSequence(drumPattern.hihat), "8n").start("0:0:0").stop(drumPattern.measures+":0:0");
+
+
+    /********************/
+    /* CREATE THE SNARE */
+    /********************/
+    //only allow frequencies in the 5k range 
+    snareNoiseFilter = new Tone.Filter(5000, "bandpass").connect(reverb);
+     
+    //this creates the snare sting (chk) noise
+    snareNoiseSynth = new Tone.NoiseSynth({
+        envelope: {
+            attack: 0.001, decay: 0.1, sustain: 0, release: 0
+        },
+        volume: -12
+    }).connect(this.snareNoiseFilter);
+
+    //this creates the drum sound
+    snareSynth = new Tone.Synth({
+        oscillator: {type: "sine"},
+        envelope: {
+            attack: 0.0001, decay: 0.1, sustain: 0, release: 0
+        },
         volume: -12
     }).toDestination();
 
-    //instantiate the horns
-    let sampler = new Tone.Sampler({
+    //lopp through and play both sounds at the same time to get the "snare" sound.
+
+    new Tone.Sequence(time => {
+        snareNoiseSynth.triggerAttackRelease("16n", time);
+        snareSynth.triggerAttackRelease("G3", "16n", time);
+    },makeSequence(drumPattern.snare),"8n").start("0:0:0").stop(drumPattern.measures+":0:0");
+
+    /************************/
+    /* CREATE THE KICK DRUM */
+    /************************/
+    let kick = new Tone.MembraneSynth({
+        pitchDecay: 0.02,
+        octaves: 6,
+        volume: -9
+    }).toDestination();
+
+    //loop it so it plays on the 1 and 3
+    new Tone.Sequence(time => {
+        kick.triggerAttackRelease(50, "65n", time)
+    }, makeSequence(drumPattern.kick),"8n").start("0:0:0").stop(drumPattern.measures+":0:0");
+
+    //start the whole thing off
+    Tone.Transport.start();
+}
+
+function makeSequence(pattern){
+    return pattern.split("").map(value => {
+        if (value == ".") {
+            return null;
+        } else {
+            return value;
+        }
+    });
+}
+
+
+function playSamples(){
+
+    Tone.start();
+    
+    //this is pretty self explanitory, the on load function is the call back for once all the samples get brought in
+    //notice we are not passing it the the same "notes" to triggerAttackRelease weare setting up in urls.  As long as the notes are "close"
+    //tone.js is smart enough to change the pitch...kinda cool
+    const sampler = new Tone.Sampler(
+    {
         urls: {
             "C5": "trumpet-c5.mp3",
             "D5": "trumpet-d5.mp3",
@@ -113,157 +342,71 @@ play.addEventListener("click", async () => {
         baseUrl: "https://skilldrick-jscc.s3.us-west-2.amazonaws.com/",
         attack: 0,
         release: 1,
-        volume: -24
+        volume: -24,
+        onload: () => {
+            sampler.triggerAttackRelease(["C5", "E5", "G5"], "1n", 0);
+        }
     }).toDestination();
 
-
-    /**************/
-    /* SEQUENCING */
-    /**************/
-
-    //Converts a string to an array of notes or nulls
-    //Dots in the string become nulls in the array and are silent
-    function mkSequence(pattern){
-        return pattern.split("").map(value => {
-            if(value == "."){
-                return null;
-            }
-            else{
-                return value;
-            }
-        });
-    }
-
-    //Converts a string to an array of notes or nulls
-    //Spaces between pips in the string become nulls in the array and are silent.
-    function mkPipeSequence(pattern){
-        return pattern.split("|").map(value => {
-            if(value.trim() == ""){
-                return null;
-            }
-            else{
-                return value;
-            }
-        });
-    }
-
-    //here is the pattern we are going to follow for the drums
-    let drumPattern = {
-        kick: "x...x...",
-        snare: "..x...x.",
-        hiHat: "xxxxxxxx"
-    };
-        
-    //set up the hiHat sequence we are going to use
-    let hiHatSequence = new Tone.Sequence(time => {
-        drums.hiHat.triggerAttackRelease("16n", time);
-    }, mkSequence(drumPattern.hiHat), "8n");
-
-    //set up the snare sequence we are going to use
-    let snareSequence = new Tone.Sequence(time => {
-        drums.snare.triggerAttackRelease("16n", time);
-    }, mkSequence(drumPattern.snare), "8n");
-
-    //set up the kick sequence we are going to use
-    let kickSequence = new Tone.Sequence(time => {
-        drums.kick.triggerAttackRelease("E1", "16n", time)
-    }, mkSequence(drumPattern.kick), "8n");
-
-    //set up the low bass sequence we are going to use
-    let lowBaseSequence = new Tone.Sequence((time, note) => {
-        lowBass.triggerAttackRelease(note, "16n", time, 0.6);
-    }, mkPipeSequence("G2| | |G2|G2| | | "), "8n");
-
-    //set up the high bass sequence we are going to use
-    let highBaseSequence = new Tone.Sequence((time, note) => {
-        highBass.triggerAttackRelease(note, "16n", time, 0.3);
-    }, mkPipeSequence("G3|F3|E3|D3|G2|D3|G3|D3"), "8n");
-
-    //bass chords
-    let chords = {
-        1: ["D4", "G4"],
-        2: ["E4", "G4"],
-        3: ["C4", "E4", "G4"],
-        4: ["B3", "F4", "G4"]
-    };
-
-    function playChord(time, chordname){
-        let notes = chords[chordname];
-        chordSynth.triggerAttackRelease(notes, "16n", time, 0.6);
-    }
-
-    let chordSequence1 = new Tone.Sequence((time, chordname) => {
-        playChord(time, chordname);
-    }, mkSequence("1...2...3..4...31...2...3..4.343"), "8n")
-
-    let chordSequence2 = new Tone.Sequence((time, chordname) => {
-        playChord(time, chordname);
-    }, mkSequence("3...2...4..1.213"), "8n")
-
-
-    let trumpetPart = new Tone.Part((time, note) => {
-        sampler.triggerAttackRelease(note, "1n", time);
-    }, [
-        ["0:0:0", "G5"],
-        ["0:2:0", "C5"],
-        ["1:0:0", "G5"],
-
-        ["2:0:0", "D5"],
-        ["2:2:0", "C5"],
-        ["3:0:0", "B4"],
-
-        ["4:0:0", "G5"],
-        ["4:2:0", "C5"],
-        ["5:0:0", "G5"],
-
-        ["6:0:0", "D5"],
-        ["6:2:0", "C5"],
-        ["7:0:0", "B4"],
-        ["7:2:0", "D5"],
-
-        ["8:0:0", "C5"],
-        ["8:2:0", "E5"],
-        ["9:0:0", "F5"],
-        ["9:2:0", "D5"],
-
-        ["10:0:0", "C5"],
-        ["10:2:0", "E5"],
-        ["11:0:0", "D5"],
-
-        ["12:0:0", "C5"],
-        ["12:2:0", "E5"],
-        ["13:0:0", "F5"],
-        ["13:2:0", "D5"],
-
-        ["14:0:0", "C5"],
-        ["14:2:0", "E5"],
-        ["15:0:0", ["B4", "G5"]],
-    ]);
-
-    /********/
-    /* SONG */
-    /********/
-    //drums
-    hiHatSequence.start("0:0:0").stop("44:0:0");
-    snareSequence.start("0:0:0").stop("44:0:0");
-    kickSequence.start("0:0:0").stop("44:0:0");
-    //bass
-    lowBaseSequence.start("0:0:0").stop("47:3:0");
-    highBaseSequence.start("4:0:0").stop("47:3:0");
-    //chords
-    chordSequence1.start("8:0:0").stop("24:3:0");
-    chordSequence2.start("24:0:0").stop("32:3:0");
-    chordSequence1.start("32:0:0").stop("40:3:0");
-    //trumpet
-    trumpetPart.start("16:0:0");
-
-//this will let us modify where we start the playback of our song
-    //Tone.Transport.position defaults to "0:0:0" but we'll leave this
-    //here for debugging purpose so we can point to different sections of the song
-    Tone.Transport.position = "0:0:0";
-
-    //Tone.Transport.bpm.value = 110;
-
-    //Start playing the song!
     Tone.Transport.start();
+}
+
+//the event listener for clicking on the play button
+play.addEventListener("click", () =>{
+    //hide the button
+    play.style = "display: none";
+    playing.style = " ";
+
+    /*
+    As we add different functions to go through the examples we'll call them from here
+    so we can easily comment them out once we move onto the next example so we don't need to
+    keeep commenting out bigh chunks of code
+    */
+    
+    //makeSingleSound();
+    //playMultipleNotes();
+
+    //now we are going to start building songs so we will use transports (helpers) to do so
+    //the following function calls will invoke a transport inside the function.
+    
+    //a basic loop that playes one pitch 4x in each of the 4 bars
+    //transportLoop();
+
+    //lets use the transport loop to play a random note from the pentatonic scale
+    //and build a makeshift solo randomly in the code :-)
+    //transportPentatonic();
+
+    //now we are going to try and just play a sequence of notes using the Transport Sequence function
+    //it's just a list of notes to be played at a regular interval
+    //transportSequence();
+
+    //next we'll play a sequence at more specified intervals
+    //transportPart();
+    //let darthMFVader = transportPart;
+    //darthMFVader();
+
+    //next up, we play the skins.....making some drum noises!
+    /*
+    let drumBeat = {
+        kick:  "xx.x....xx.x....xx.x....xx.x....xx.x....xx.x....xx.x....xx.x....",
+        snare: "....x.x.....x.......x.x.....x.xx....x.x.....x.......x.x.....x...",
+        hihat: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...",
+        measures: 8,
+        bpm: 160
+    };
+    */
+    let blackVelvet = {               
+        hihat: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        kick:  "X.X..XX.X..XX.X..XX.X..XX.X..XX.X..XX.X..XX.X..X",
+        snare: "...X.....X.....X.....X.....X.....X.....X.....X..",        
+        measures: 8,
+        bpm: 110
+    };
+    
+    playDrums(blackVelvet);
+    
+
+    //playSamples();
 });
+
+
